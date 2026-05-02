@@ -95,17 +95,31 @@
     </div>
   </footer>
   <script src="js/main.js"></script>
-  <script>
-    // Load games from localStorage and render
-    function loadGames() {
-      const games = JSON.parse(localStorage.getItem('cubiclens_games') || '[]');
-      const container = document.getElementById('games-container');
-      const noGames = document.getElementById('no-games');
+  <script type="module">
+    // Import Firebase
+    import { db, ref, onValue } from './js/firebase-config.js';
+    
+    // Load games from Firebase and render
+    const gamesRef = ref(db, 'games');
+    const container = document.getElementById('games-container');
+    const noGames = document.getElementById('no-games');
+    
+    // Listen for real-time updates from Firebase
+    onValue(gamesRef, function(snapshot) {
+      // Clear existing content
+      container.innerHTML = '';
+      
+      const games = [];
+      snapshot.forEach(function(childSnapshot) {
+        games.push(childSnapshot.val());
+      });
       
       if (games.length === 0) {
         noGames.style.display = 'block';
         return;
       }
+      
+      noGames.style.display = 'none';
       
       games.forEach(function(game) {
         const card = document.createElement('div');
@@ -113,8 +127,8 @@
         
         let platformsHtml = '';
         if (game.platforms && game.platforms.length > 0) {
-          platformsHtml = '<div class="game-meta">' + 
-            game.platforms.map(function(p) { return '<span class="game-platform">' + p + '</span>'; }).join('') + 
+          platformsHtml = '<div class="game-meta">' +
+            game.platforms.map(function(p) { return '<span class="game-platform">' + p + '</span>'; }).join('') +
             '</div>';
         }
         
@@ -123,7 +137,7 @@
           badgeHtml = '<span class="game-badge">' + game.badge + '</span>';
         }
         
-        card.innerHTML = 
+        card.innerHTML =
           '<div class="game-image">' +
             '<div class="game-placeholder">' + (game.emoji || '🎮') + '</div>' +
             badgeHtml +
@@ -137,9 +151,7 @@
         
         container.appendChild(card);
       });
-    }
-    
-    loadGames();
+    });
   </script>
 </body>
 </html>
