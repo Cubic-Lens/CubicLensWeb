@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CubicLens - Login</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <span class="logo-icon">◆</span>
+        <span class="logo-text">CUBIC<span class="accent">LENS</span></span>
+      </a>
+      <nav class="nav">
+        <button class="nav-toggle" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="nav-list">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="games.html" class="nav-link">Games</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+          <li class="admin-nav" style="display: none;"><a href="admin.html" class="nav-link">Admin</a></li>
+          <li class="logout-nav" style="display: none;"><a href="#" class="nav-link" id="logout-link">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="main">
+
+<section class="page-header">
+  <div class="container">
+    <h1>Login</h1>
+    <p>Sign in to access the admin panel.</p>
+  </div>
+</section>
+
+<section class="login-section">
+  <div class="container">
+    <div class="login-wrapper">
+      <div id="login-error" class="alert alert-error" style="display: none;"></div>
+      <div id="login-success" class="alert alert-success" style="display: none;"></div>
+
+      <form class="login-form" id="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <span class="logo-icon">◆</span>
+            <span class="logo-text">CUBIC<span class="accent">LENS</span></span>
+          </a>
+          <p>Crafting immersive gaming experiences through innovation and creativity.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="games.html">Games</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h4>Follow Us</h4>
+          <div class="social-icons">
+            <a href="#" aria-label="Twitter" class="social-icon">𝕏</a>
+            <a href="#" aria-label="Discord" class="social-icon">💬</a>
+            <a href="#" aria-label="YouTube" class="social-icon">▶</a>
+            <a href="#" aria-label="Instagram" class="social-icon">📷</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 CubicLens. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script>
+    // Stored bcrypt hash for user "shft" with password "CubicShft123!"
+    const ADMIN_HASH = '$2b$10$oqmofrM3VlMhVM2rSbprguyIv.lOGlTckf.zKrmsOcv2hvcCVZ1Qy';
+
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorDiv = document.getElementById('login-error');
+      const successDiv = document.getElementById('login-success');
+      
+      errorDiv.style.display = 'none';
+      successDiv.style.display = 'none';
+      
+      if (username !== 'shft') {
+        errorDiv.textContent = 'Invalid username or password.';
+        errorDiv.style.display = 'block';
+        return;
+      }
+      
+      try {
+        const isValid = dcodeIO.bcrypt.compareSync(password, ADMIN_HASH);
+        
+        if (isValid) {
+          // Set session in localStorage
+          localStorage.setItem('cubiclens_admin', 'true');
+          localStorage.setItem('cubiclens_user', username);
+          
+          successDiv.textContent = 'Login successful! Redirecting...';
+          successDiv.style.display = 'block';
+          
+          setTimeout(function() {
+            window.location.href = 'admin.html';
+          }, 1000);
+        } else {
+          errorDiv.textContent = 'Invalid username or password.';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'An error occurred. Please try again.';
+        errorDiv.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

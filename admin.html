@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CubicLens - Admin</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <span class="logo-icon">◆</span>
+        <span class="logo-text">CUBIC<span class="accent">LENS</span></span>
+      </a>
+      <nav class="nav">
+        <button class="nav-toggle" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="nav-list">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="games.html" class="nav-link">Games</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+          <li><a href="admin.html" class="nav-link active">Admin</a></li>
+          <li><a href="#" class="nav-link" id="logout-link">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="main">
+
+<section class="page-header">
+  <div class="container">
+    <h1>Admin Console</h1>
+    <p>Manage your games and content.</p>
+  </div>
+</section>
+
+<section class="admin-section">
+  <div class="container">
+    <div id="admin-success" class="alert alert-success" style="display: none;"></div>
+    <div id="admin-error" class="alert alert-error" style="display: none;"></div>
+
+    <div class="admin-grid">
+      <!-- Add Game Form -->
+      <div class="admin-form-wrapper">
+        <h2>Add New Game</h2>
+        <form class="admin-form" id="add-game-form">
+          <div class="form-group">
+            <label for="title">Game Title</label>
+            <input type="text" id="title" name="title" placeholder="Enter game title" required>
+          </div>
+          <div class="form-group">
+            <label for="genre">Genre</label>
+            <input type="text" id="genre" name="genre" placeholder="e.g., Action RPG" required>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea id="description" name="description" rows="4" placeholder="Describe the game..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="platforms">Platforms (comma-separated)</label>
+            <input type="text" id="platforms" name="platforms" placeholder="PC, PS5, Xbox">
+          </div>
+          <div class="form-group">
+            <label for="badge">Badge (optional)</label>
+            <input type="text" id="badge" name="badge" placeholder="e.g., New Release, Coming Soon">
+          </div>
+          <div class="form-group">
+            <label for="emoji">Emoji Icon</label>
+            <input type="text" id="emoji" name="emoji" placeholder="🎮" value="🎮">
+          </div>
+          <button type="submit" class="btn btn-primary btn-full">Add Game</button>
+        </form>
+      </div>
+
+      <!-- Games List -->
+      <div class="admin-games-list">
+        <h2>Current Games (<span id="games-count">0</span>)</h2>
+        <div id="admin-games" class="admin-games">
+          <!-- Games will be loaded here -->
+        </div>
+        <p id="no-games-admin" class="no-games-admin" style="display: none;">No games added yet. Use the form to add your first game.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <span class="logo-icon">◆</span>
+            <span class="logo-text">CUBIC<span class="accent">LENS</span></span>
+          </a>
+          <p>Crafting immersive gaming experiences through innovation and creativity.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="games.html">Games</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h4>Follow Us</h4>
+          <div class="social-icons">
+            <a href="#" aria-label="Twitter" class="social-icon">𝕏</a>
+            <a href="#" aria-label="Discord" class="social-icon">💬</a>
+            <a href="#" aria-label="YouTube" class="social-icon">▶</a>
+            <a href="#" aria-label="Instagram" class="social-icon">📷</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 CubicLens. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script>
+    // Check if user is logged in
+    if (!localStorage.getItem('cubiclens_admin')) {
+      window.location.href = 'login.html';
+    }
+
+    // Logout functionality
+    document.getElementById('logout-link').addEventListener('click', function(e) {
+      e.preventDefault();
+      localStorage.removeItem('cubiclens_admin');
+      localStorage.removeItem('cubiclens_user');
+      window.location.href = 'index.html';
+    });
+
+    // Load games from localStorage
+    function getGames() {
+      return JSON.parse(localStorage.getItem('cubiclens_games') || '[]');
+    }
+
+    function saveGames(games) {
+      localStorage.setItem('cubiclens_games', JSON.stringify(games));
+    }
+
+    function renderGames() {
+      const games = getGames();
+      const container = document.getElementById('admin-games');
+      const countEl = document.getElementById('games-count');
+      const noGamesEl = document.getElementById('no-games-admin');
+      
+      container.innerHTML = '';
+      countEl.textContent = games.length;
+      
+      if (games.length === 0) {
+        noGamesEl.style.display = 'block';
+        return;
+      }
+      
+      noGamesEl.style.display = 'none';
+      
+      games.forEach(function(game) {
+        const item = document.createElement('div');
+        item.className = 'admin-game-item';
+        item.innerHTML = 
+          '<div class="admin-game-info">' +
+            '<span class="admin-game-emoji">' + (game.emoji || '🎮') + '</span>' +
+            '<div>' +
+              '<h4>' + game.title + '</h4>' +
+              '<p>' + game.genre + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<button class="btn btn-danger btn-sm delete-game" data-id="' + game.id + '">Delete</button>';
+        
+        container.appendChild(item);
+      });
+      
+      // Add delete handlers
+      document.querySelectorAll('.delete-game').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          const id = parseInt(this.getAttribute('data-id'));
+          if (confirm('Are you sure you want to delete this game?')) {
+            deleteGame(id);
+          }
+        });
+      });
+    }
+
+    function deleteGame(id) {
+      let games = getGames();
+      games = games.filter(function(g) { return g.id !== id; });
+      saveGames(games);
+      renderGames();
+      showSuccess('Game deleted successfully!');
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('admin-success');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(function() { el.style.display = 'none'; }, 3000);
+    }
+
+    function showError(msg) {
+      const el = document.getElementById('admin-error');
+      el.textContent = msg;
+      el.style.display = 'block';
+      setTimeout(function() { el.style.display = 'none'; }, 3000);
+    }
+
+    // Add game form handler
+    document.getElementById('add-game-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const title = document.getElementById('title').value;
+      const genre = document.getElementById('genre').value;
+      const description = document.getElementById('description').value;
+      const platforms = document.getElementById('platforms').value;
+      const badge = document.getElementById('badge').value;
+      const emoji = document.getElementById('emoji').value;
+      
+      if (!title || !genre || !description) {
+        showError('Title, genre, and description are required.');
+        return;
+      }
+      
+      const games = getGames();
+      const newGame = {
+        id: Date.now(),
+        title: title,
+        genre: genre,
+        description: description,
+        platforms: platforms ? platforms.split(',').map(function(p) { return p.trim(); }).filter(function(p) { return p; }) : [],
+        badge: badge || '',
+        emoji: emoji || '🎮'
+      };
+      
+      games.push(newGame);
+      saveGames(games);
+      
+      // Reset form
+      this.reset();
+      document.getElementById('emoji').value = '🎮';
+      
+      renderGames();
+      showSuccess('Game added successfully!');
+    });
+
+    // Initial render
+    renderGames();
+  </script>
+</body>
+</html>

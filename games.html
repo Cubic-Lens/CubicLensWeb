@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CubicLens - Games</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <a href="/" class="logo">
+        <span class="logo-icon">◆</span>
+        <span class="logo-text">CUBIC<span class="accent">LENS</span></span>
+      </a>
+      <nav class="nav">
+        <button class="nav-toggle" aria-label="Toggle navigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <ul class="nav-list">
+          <li><a href="/" class="nav-link">Home</a></li>
+          <li><a href="games.html" class="nav-link active">Games</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+          <li class="admin-nav" style="display: none;"><a href="admin.html" class="nav-link">Admin</a></li>
+          <li class="logout-nav" style="display: none;"><a href="#" class="nav-link" id="logout-link">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="main">
+
+<section class="page-header">
+  <div class="container">
+    <h1>Our Games</h1>
+    <p>Explore the worlds we've created and the experiences we continue to deliver.</p>
+  </div>
+</section>
+
+<section class="games-section">
+  <div class="container">
+    <div id="games-container" class="games-grid">
+      <!-- Games will be loaded here by JavaScript -->
+    </div>
+    <div id="no-games" class="no-games" style="display: none;">
+      <p>No games available yet. Check back soon!</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="container">
+    <h2>Interested in Partnering With Us?</h2>
+    <p>We're always open to new collaborations and publishing opportunities.</p>
+    <a href="contact.html" class="btn btn-primary">Contact Us</a>
+  </div>
+</section>
+
+  </main>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <a href="/" class="logo">
+            <span class="logo-icon">◆</span>
+            <span class="logo-text">CUBIC<span class="accent">LENS</span></span>
+          </a>
+          <p>Crafting immersive gaming experiences through innovation and creativity.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="games.html">Games</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-social">
+          <h4>Follow Us</h4>
+          <div class="social-icons">
+            <a href="#" aria-label="Twitter" class="social-icon">𝕏</a>
+            <a href="#" aria-label="Discord" class="social-icon">💬</a>
+            <a href="#" aria-label="YouTube" class="social-icon">▶</a>
+            <a href="#" aria-label="Instagram" class="social-icon">📷</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 CubicLens. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script>
+    // Load games from localStorage and render
+    function loadGames() {
+      const games = JSON.parse(localStorage.getItem('cubiclens_games') || '[]');
+      const container = document.getElementById('games-container');
+      const noGames = document.getElementById('no-games');
+      
+      if (games.length === 0) {
+        noGames.style.display = 'block';
+        return;
+      }
+      
+      games.forEach(function(game) {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+        
+        let platformsHtml = '';
+        if (game.platforms && game.platforms.length > 0) {
+          platformsHtml = '<div class="game-meta">' + 
+            game.platforms.map(function(p) { return '<span class="game-platform">' + p + '</span>'; }).join('') + 
+            '</div>';
+        }
+        
+        let badgeHtml = '';
+        if (game.badge) {
+          badgeHtml = '<span class="game-badge">' + game.badge + '</span>';
+        }
+        
+        card.innerHTML = 
+          '<div class="game-image">' +
+            '<div class="game-placeholder">' + (game.emoji || '🎮') + '</div>' +
+            badgeHtml +
+          '</div>' +
+          '<div class="game-info">' +
+            '<h3>' + game.title + '</h3>' +
+            '<p class="game-genre">' + game.genre + '</p>' +
+            '<p class="game-description">' + game.description + '</p>' +
+            platformsHtml +
+          '</div>';
+        
+        container.appendChild(card);
+      });
+    }
+    
+    loadGames();
+  </script>
+</body>
+</html>
